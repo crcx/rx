@@ -1,10 +1,10 @@
-CFLAGS=-O2 -Wall -Wextra -pedantic -s -static
+CFLAGS=-O2 -Wall -Wextra -pedantic
 
 default:
-	$(CC) $(CFLAGS) retro.c -o retro
-	./retro -f retro.forth -f devices.retro -f pack.retro > bootstrap
-	cat bootstrap >>retro
+	$(CC) $(CFLAGS) retro.c -o rx
+	./rx -f retro.forth -f devices.retro -f pack.retro > bootstrap
+	cat bootstrap >>rx
 	rm bootstrap
 
 clean:
-	rm -f retro
+	rm -f rx

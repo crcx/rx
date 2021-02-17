@@ -1,4 +1,4 @@
-#!/usr/bin/env retro
+#!./rx
 
 Many of the RETRO interface layers embed a copy of the image
 into the binary. This is done by converting the image into a
