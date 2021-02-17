@@ -7,3 +7,19 @@ set, I/O devices (keyboard, screen, files, rng, and a few Unix
 environment items), and embeds a copy of the minimal image.
 Higher level code (retro.forth, devices.retro, etc) are appended
 to the binary. This code will be compiled when the VM is run.
+
+The image contains a compiled memory image for the VM. This is
+built from the assembly source in `retro.muri`, and is assembled
+using `muri.retro`. The raw data is exported to a C array, and
+is copied into the `retro.c` to allow a single file deployment
+of a complete system.
+
+The main sources for the system are written in Forth, using the
+VM and the words provided by the default image. `retro.forth`
+contains most of the functionality. `devices.retro` contains
+code to use the I/O devices provided by the VM. Both of these
+are appended to the `rx` binary.
+
+The `pack.retro` program is used to strip comments and indention
+from the main sources prior to appending. This is optional;
+using it makes the binary smaller.
