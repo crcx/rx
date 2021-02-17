@@ -1,0 +1,159 @@
+# RETRO Forth
+
+This implements Forth words to use the I/O devices provided by my
+personal build.
+
+## Files
+
+~~~
+:file:operation #4 io:scan-for io:invoke ;
+
+#0 'file:R  const  (Read
+#1 'file:W  const  (Write
+#2 'file:A  const  (Append
+#3 'file:R+ const  (Read/Write
+
+:file:open  (sm-h) #0 file:operation ;
+:file:close (h-)   #1 file:operation ;
+:file:read  (h-c)  #2 file:operation ;
+:file:write (ch-)  #3 file:operation ;
+:file:tell  (h-n)  #4 file:operation ;
+:file:seek  (nh-)  #5 file:operation ;
+:file:size  (h-n)  #6 file:operation ;
+:file:delete (s-)  #7 file:operation ;
+:file:flush (f-)   #8 file:operation ;
+
+:file:exists?  (s-f)
+  file:R file:open dup n:-zero?
+  [ file:close TRUE ]
+  [ drop FALSE      ] choose ;
+
+:file:open-for-reading (s-nn)
+  file:R file:open dup file:size swap ;
+
+:file:open-for-append (s-nn)
+  file:A file:open dup file:size swap ;
+
+:file:open-for-writing (s-n)
+  file:W file:open ;
+
+{{
+  'FID var
+  'Size var
+  'Action var
+  'Buffer var
+  :-eof? (-f) @FID file:tell @Size lt? ;
+  :preserve (q-) &FID [ &Size &call v:preserve ] v:preserve ;
+---reveal---
+  :file:read-line (f-s)
+    !FID
+    [ here dup !Buffer buffer:set
+      [ @FID file:read dup buffer:add
+        [ ASCII:CR eq? ] [ ASCII:LF eq? ] [ ASCII:NUL eq? ] tri or or ] until
+        buffer:get drop ] buffer:preserve
+    @Buffer ;
+
+  :file:for-each-line (sq-)
+    [ !Action
+      file:open-for-reading !FID !Size
+      [ @FID file:read-line @Action call -eof? ] while
+      @FID file:close
+    ] preserve ;
+}}
+
+{{
+  'FID var
+---reveal---
+  :file:slurp (as-)
+    [ swap buffer:set file:open-for-reading !FID
+      [ @FID file:read buffer:add ] times
+      @FID file:close
+    ] buffer:preserve ;
+}}
+
+:file:spew (ss-)
+  file:open-for-writing swap [ over file:write ] s:for-each file:close ;
+~~~
+
+
+## Scripting
+
+~~~
+:script:operation #9 io:scan-for io:invoke ;
+:script:arguments (-n)                   #0 script:operation ;
+:script:get-argument (n-s)  s:empty swap #1 script:operation ;
+:include  (s-)                           #2 script:operation ;
+:script:name (-s)           s:empty      #3 script:operation ;
+~~~
+
+
+## Unix
+
+~~~
+:unix:operation #8 io:scan-for io:invoke ;
+:unix:system (s-)  #0 unix:operation ;
+:unix:popen (sn-n) #1 unix:operation ;
+:unix:pclose (n-)  #2 unix:operation ;
+:unix:chdir (s-)   #3 unix:operation ;
+:unix:getenv (sa-) #4 unix:operation ;
+:unix:putenv (s-)  #5 unix:operation ;
+
+(s-s)  :unix:pipe
+         file:R unix:popen &file:read-line &unix:pclose bi ;
+
+(-s)   :unix:get-cwd
+         'pwd unix:pipe s:trim '/ s:append ;
+
+(-n)   :unix:count-files-in-cwd
+         'ls_-1_|_wc_-l unix:pipe s:trim s:to-number ;
+
+(q-)   :unix:for-each-file (q-)
+         'ls_-1_-p file:R unix:popen
+         unix:count-files-in-cwd
+         [ [ file:read-line s:temp over call ] sip ] times
+         unix:pclose drop ;
+
+{{
+  :start  swap buffer:set file:R unix:popen ;
+  :read   dup file:read dup buffer:add n:zero? ;
+  :finish unix:pclose buffer:size ;
+---reveal---
+  :unix:slurp-pipe (as-n)
+    [ start &read until finish ] buffer:preserve ;
+}}
+~~~
+
+
+## Random Number Generator
+
+~~~
+:n:random (-n) #10 io:scan-for io:invoke ;
+~~~
+
+
+## Input
+
+~~~
+{{
+  :eol? (c-f)
+    [ ASCII:CR eq? ] [ ASCII:LF eq? ] bi or ;
+
+  :valid? (s-sf)
+    dup s:length n:-zero? ;
+
+  :check-bs (c-c)
+    dup [ #8 eq? ] [ #127 eq? ] bi or [ buffer:get buffer:get drop-pair ] if ;
+---reveal---
+  :c:get (-c) #1 io:scan-for io:invoke ;
+
+  :s:get (-s) [ #1024 buffer:set
+                [ c:get dup buffer:add check-bs eol? ] until
+                  buffer:start s:chop ] buffer:preserve ;
+}}
+~~~
+
+~~~
+[ nl '?_word_not_found s:put nl ] &err:notfound set-hook
+:bye reset drop ;
+~~~
+

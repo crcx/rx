@@ -1,0 +1,354 @@
+#!./retro
+
+# retro-edit
+
+Copyright (c) 2021, Charles Childers
+
+As part of my personal goal of using my own tools as much as possible,
+I've written this little line editor. It's vaguely similar to ed or
+edlin, but I've not attempted to replicate these. Mine is much simpler.
+
+On startup, it reads each line from a file into memory. The maximum line
+length and number of lines can be configured in the source, but must fit
+into Retro's memory space.
+
+Commands are entered as a single character, which may be followed by
+optional or mandatory parameters.
+
+An editing session (sans output) might look like:
+
+    ,n
+    a5
+    i5,enter some text on line 5
+    p0,10
+    x8
+    p15,30
+    x20,22
+    ,n
+    w
+    q
+
+Look further in the source for a table of commands.
+
+# The Code
+
+## Configuration
+
+The editor needs a max line length and max number of lines per
+file.
+
+~~~
+#140 'cfg:MAX-LINE-LENGTH const
+#2000 'cfg:MAX-LINES const
+~~~
+
+## The File Contents
+
+The file gets read into an array of lines. This is in the `File`
+structure. `Lines` holds the number of lines in the file.
+
+A word, `ed:to-line` takes a line number and returns the address
+of the actual line contents.
+
+Of note here: these account for adding in a NULL terminator for
+each line.
+
+~~~
+'File d:create
+  cfg:MAX-LINES cfg:MAX-LINE-LENGTH *
+  cfg:MAX-LINES + allot
+
+'Lines var
+'Filename d:create
+  #1025 allot
+
+:ed:constrain (n-m) #0 @Lines n:limit ;
+:ed:to-line   (n-a) cfg:MAX-LINE-LENGTH over * + &File + ;
+~~~
+
+## Display A Line
+
+Line display is trivial in this. I optionally support line numbers,
+controlled by setting `ShowLineNumbers` to `TRUE`.
+
+~~~
+'ShowLineNumbers var
+
+:ed:show-line-number (-)
+  @ShowLineNumbers [ dup n:put ': s:put tab ] if ;
+
+:ed:display-line (n)
+  ed:constrain ed:show-line-number ed:to-line s:put nl ;
+~~~
+
+## Command Processor
+
+Commands are single characters. I reserve an array of pointers
+(`Commands`), with the ASCII value of the character being an
+index into this. If the final pointer is non-zero, this will
+call the command handler.
+
+`ed:register-command` is used to add a handler to the table,
+and `ed:deregister-command` is used to remove one.
+
+~~~
+'Commands d:create #255 allot
+
+:ed:register-command  (ac) &Commands + store ;
+:ed:deregister-command (c) &Commands + v:off ;
+:ed:process-command    (c) fetch &Commands + fetch 0; call ;
+~~~
+
+## Some Editing Functions
+
+~~~
+:ed:blank-line  (n) ed:to-line s:empty swap s:copy ;
+
+:ed:delete-line (n)
+  &Lines v:dec
+  @Lines over - [ [ ed:blank-line ]
+                  [ dup n:inc swap [ ed:to-line ] bi@ s:copy ]
+                  [ n:inc ] tri ] times drop ;
+
+:ed:copy-line (mn) [ ed:to-line ] bi@ s:copy ;
+
+{{
+  :shift-line dup n:dec swap ed:copy-line ;
+---reveal---
+  :ed:insert-line (n)
+    [ @Lines [ [ shift-line ] sip n:dec dup-pair eq? ] until drop
+      &Lines v:inc ] sip ed:blank-line ;
+}}
+~~~
+
+## Input
+
+Input is read by `ed:get-input`. This returns the first character as
+a value and stores the rest, with the pointer being kept in `Input`.
+
+~~~
+'Input var
+
+:ed:get-input (-c) s:get dup n:inc s:keep !Input ;
+~~~
+
+## Editor Loop
+
+The editor loop is thus simple. Get input, process the command, and
+repeat. I run this in a simple `Heap` preserving loop, so command
+handlers can allocate space at `here` without worrying about cleanup
+afterwards. I also reset the stack.
+
+~~~
+'Done var
+
+:edit
+  [ &Heap [
+    reset ed:get-input ed:process-command
+  ] v:preserve @Done ] until ;
+~~~
+
+## The Commands
+
+In general, each command is intended to do a single task.
+
+### Display
+
+`re` displays the file contents on command. I provide a few commands for
+this.
+
+    | , |            | display all lines in the file                   |
+    | , | n          | display all lines in the file with line numbers |
+    | p | line       | display a single line                           |
+    | p | first,last | display a range of lines                        |
+    | / |            | search for text; display matching lines         |
+    | # |            | toggle display of line numbers                  |
+
+The `,` command displays all lines in the file. It will optionally
+display line numbers if a `n` is included after the `,`.
+
+~~~
+:cmd:,
+  &ShowLineNumbers [
+    @Input 'n s:eq? [ &ShowLineNumbers v:on ] if
+    #0 @Lines [ dup ed:display-line n:inc ] times drop
+  ] v:preserve ;
+~~~
+
+It's sometimes useful to have all outputs using line numbers. I
+define a `#` command to toggle the line number display. This will
+affect all outputs.
+
+~~~
+:cmd:# @ShowLineNumbers not !ShowLineNumbers ;
+~~~
+
+To display a single line, use `p` followed by the line number or to
+display a range of lines, use `p`, followed by a `first,last` line
+number pair.
+
+~~~
+:pair?         @Input $, s:contains-char? ;
+:get-limits    @Input $, s:tokenize [ s:to-number ed:constrain ] a:for-each ;
+:display-range over - n:inc [ dup ed:display-line n:inc ] times drop ;
+
+:cmd:p
+  pair? [ get-limits display-range ]
+        [ @Input s:to-number ed:display-line ] choose ;
+~~~
+
+The final display related command is `/`, which displays lines that contain
+the text following the `/`.
+
+~~~
+:match? I ed:to-line @Input s:contains-string? ;
+
+:cmd:/ @Lines [ match? [ I ed:display-line ] if ] indexed-times ;
+~~~
+
+### Editing
+
+    | a | line       | add a line at line number, shifting lines down  |
+    | a | line,count | add lines at line number, shifting lines down   |
+
+Adding lines is done with `a`. Provide either a line number or a
+`first,count` pair and lines will be inserted starting at the specified
+line.
+
+~~~
+:cmd:a
+  pair? [ get-limits [ dup ed:insert-line ] times drop ]
+        [ @Input s:to-number ed:insert-line ] choose ;
+~~~
+
+    | x | line       | remove line                                     |
+    | x | first,last | remove lines first through last, inclusive      |
+
+Use `x` to delete one or more lines. Pass either a single line number or
+a `first,last` pair.
+
+~~~
+:delete-lines [ dup ed:delete-line n:dec dup-pair lteq? ] while drop-pair ;
+
+:cmd:x
+  pair? [ get-limits delete-lines ]
+        [ @Input s:to-number ed:delete-line ] choose ;
+~~~
+
+    | d | line       | erase contents of a line                        |
+
+To erase the contents of a line, use `d` followed by the line number.
+
+~~~
+:cmd:d @Input s:to-number ed:blank-line ;
+~~~
+
+    | i | line,text  | replace contents of line with text              |
+    | e | line       | insert text beginning at line, shifting down    |
+
+I provide two words for editing the text of the file. `i` replaces the
+text on a line with the provided text, and `e` insterts text, shifting
+existing lines down. When entering text with `e`, use a period on an
+otherwise blank line to return to the command processing mode.
+
+~~~
+:cmd:i @Input $, s:split s:to-number ed:to-line [ n:inc ] dip s:copy ;
+
+{{
+  :add-space  dup ed:insert-line ;
+  :store-line over ed:to-line s:copy n:inc ;
+  :cleanup    n:dec ed:delete-line ;
+---reveal---
+  :cmd:e
+    @Input s:to-number
+    [ add-space s:get [ store-line ] sip '. s:eq? ] until cleanup ;
+}}
+~~~
+
+### Setting the Filename
+
+    | f | filename   | set the filename for saves, loads               |
+
+~~~
+:cmd:f @Input &Filename s:copy ;
+~~~
+
+### Saving
+
+    | w |            | save file                                       |
+
+Files are saved with `w`. The number of lines written will be displayed
+upon completion.
+
+~~~
+{{
+  :with-file  &Filename file:open-for-writing [ swap call ] sip file:close ;
+  :file:nl    ASCII:LF over file:write ;
+  :write-line I ed:to-line [ over file:write ] s:for-each file:nl ;
+---reveal---
+  :cmd:w [ @Lines [ write-line ] indexed-times ] with-file @Lines n:put nl ;
+}}
+~~~
+
+
+~~~
+:erase-all
+  #0 cfg:MAX-LINES [ #0 over ed:to-line store n:inc ] times drop ;
+
+:load-file
+  #0 &Filename [ over ed:to-line s:copy n:inc ] file:for-each-line
+  !Lines ;
+
+:cmd:l erase-all load-file ;
+~~~
+
+### Quit
+
+    | q |            | quit retro-edit                                 |
+
+Use `q` to quit the editor.
+
+~~~
+:cmd:q nl &Done v:on ;
+~~~
+
+### Others
+
+    | n | line       | indent line                                     |
+    | N | line       | unindent line                                   |
+    | ; |            | save, then run file via retro                   |
+    | ; | text       | save, then run text as a shell command          |
+
+~~~
+:cmd:n @Input s:to-number ed:to-line dup '__ s:prepend swap s:copy ;
+:cmd:N @Input s:to-number ed:to-line dup #2 + swap s:copy ;
+
+:cmd:;
+  @Input dup s:length n:zero?
+  [ drop &Filename 'retro_%s s:format ] if unix:system ;
+
+:cmd:?
+  @Input s:length n:-zero?
+  [ @Input 'retro-describe_%s s:format unix:system ] if ;
+~~~
+
+## Register The Commands
+
+~~~
+{ ',p#/axdiefwlqnN;? [ ] s:for-each }
+[ [ 'cmd:%c s:format d:lookup d:xt fetch ] sip ed:register-command ]
+a:for-each
+~~~
+
+The final startup process is:
+
+- copy the file name to Filename
+- create it if the file does not exist
+- load the file into memory
+- run the editor command loop
+
+~~~
+#0 script:get-argument dup s:put nl &Filename s:copy
+&Filename file:exists? [ &Filename file:W file:open file:close ] -if
+load-file edit bye
+~~~

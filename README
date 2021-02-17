@@ -1,0 +1,9 @@
+This is my personal, experimental branch of RetroForth.
+
+Architecture
+
+The VM is defined in retro.c. This implements the instruction
+set, I/O devices (keyboard, screen, files, rng, and a few Unix
+environment items), and embeds a copy of the minimal image.
+Higher level code (retro.forth, devices.retro, etc) are appended
+to the binary. This code will be compiled when the VM is run.
