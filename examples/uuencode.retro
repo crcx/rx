@@ -97,7 +97,7 @@ And then using the factors to do the conversion:
 :convert
   &Data
   SIZE #45 / &full-line times
-  remaining-size partial-line final-bundle nl ;
+  remaining-size partial-line final-bundle nl drop ;
 ~~~
 
 
