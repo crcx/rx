@@ -1,17 +1,9 @@
 ~~~
-'Assemble: s:put tab
-'muri.retro include
-'done s:put nl
+:a:unpack [ ] a:for-each ;
 
-'Export___ s:put tab
-'image-to-c.retro include
-'done s:put nl
-
-'Patch____ s:put tab
-'patch.retro include
-'done s:put nl
-
-'Cleanup__ s:put tab
-{ 'patch 'ngaImage } [ file:delete ] a:for-each
-'done s:put nl
+{ { 'Assemble [ 'tools/muri.retro include ] }
+  { 'Export__ [ 'tools/image-to-c.retro include ] }
+  { 'Patch___ [ 'tools/patch.retro include ] }
+  { 'Cleanup_ [  { 'patch 'ngaImage } [ file:delete ] a:for-each ] }
+} [ a:unpack [ s:put tab ] dip call 'done s:put nl ] a:for-each
 ~~~

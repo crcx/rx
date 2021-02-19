@@ -1,0 +1,21 @@
+General Instructions for Building
+---------------------------------------------------------------
+Requirements:
+
+- make
+- C compiler
+
+Process:
+
+    make
+
+---------------------------------------------------------------
+
+If you need to build a new image:
+
+First, build `rx` as shown above.
+
+Then:
+
+    ./rx update.retro
+    make
