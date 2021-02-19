@@ -1,5 +1,12 @@
 #!./rx
 
+Forth systems are traditionally interactive. Rx is not; I normally
+write my sources and run them from the command line.
+
+This implements an interactive interface for Retro. It's not a great
+environment; editing is limited to backspace, no checks are done for
+buffer over/underflow.
+
 ~~~
 {{
   :eol? (c-f)
