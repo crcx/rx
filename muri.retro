@@ -102,7 +102,6 @@ labels pointing to specific addresses in the image. References
 are compiled as dummy values, to be resolved later.
 
 ~~~
-'Pass_1:_ s:put
 #0 !AP
 'retro.muri
   [ dup s:length n:zero? [ drop #0 ] if 0;
@@ -114,7 +113,6 @@ are compiled as dummy values, to be resolved later.
     $s [ &I, s:for-each #0 I, ] case
     'ERROR s:put nl
   ] unu
-@AP n:put '_cells s:put nl
 ~~~
 
 ### Pass 2
@@ -123,7 +121,6 @@ The second pass skips over everything except references, which
 get resolved and filled in. This allows for forward references.
 
 ~~~
-'Pass_2:_ s:put
 #0 !AP
 'retro.muri
   [ dup s:length n:zero? [ drop #0 ] if 0;
@@ -135,7 +132,6 @@ get resolved and filled in. This allows for forward references.
     $s [ s:length n:inc &AP v:inc-by ] case
     'ERROR s:put nl
   ] unu
-@AP n:put '_cells s:put nl
 ~~~
 
 ### Save Image

@@ -1,0 +1,17 @@
+~~~
+'Assemble: s:put tab
+'muri.retro include
+'done s:put nl
+
+'Export___ s:put tab
+'image-to-c.retro include
+'done s:put nl
+
+'Patch____ s:put tab
+'patch.retro include
+'done s:put nl
+
+'Cleanup__ s:put tab
+{ 'patch 'ngaImage } [ file:delete ] a:for-each
+'done s:put nl
+~~~

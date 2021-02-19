@@ -1,0 +1,23 @@
+~~~
+{{
+  :capture{  &buffer:add &c:put set-hook ;
+  :}         &c:put unhook ;
+---reveal---
+  :capture-output (qa-)
+    [ buffer:set capture{ call } ] buffer:preserve ;
+}}
+
+'Output d:create
+  #256 #1024 * n:inc allot
+~~~
+
+~~~
+'Done var
+:examine dup 'CELL_ngaImageCells_= s:begins-with? @Done or !Done ;
+
+[ 'rx.c [ examine @Done [ drop ] if; s:put nl ] file:for-each-line
+  'patch [ s:put nl ] file:for-each-line
+] &Output capture-output
+
+&Output 'rx.c file:spew
+~~~

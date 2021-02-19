@@ -1,16 +1,27 @@
 #!./rx
 
-Many of the RETRO interface layers embed a copy of the image
-into the binary. This is done by converting the image into a
-C file that can be included or compiled and linked. The source
-includes a tool, `retro-embedimage`, for this. This implements
-the tool in RETRO.
+This tool converts an image into a C array that can be compiled
+as part of the `rx` binary. It's used to allow an installation
+to not need a separate image file.
+
+~~~
+{{
+  :capture{  &buffer:add &c:put set-hook ;
+  :}         &c:put unhook ;
+---reveal---
+  :capture-output (qa-)
+    [ buffer:set capture{ call } ] buffer:preserve ;
+}}
+
+'Output d:create
+  #256 #1024 * n:inc allot
+~~~
 
 First up, I need to load the image to a buffer, so I allocate
 space for this now.
 
 ~~~
-#65535 #4 * 'IMAGE-SIZE const
+#1024 'IMAGE-SIZE const
 'Image d:create
   IMAGE-SIZE allot
 ~~~
@@ -43,14 +54,16 @@ The next step is a word to return the size of the file in
 cells.
 
 ~~~
-:size (-n) @FID file:size #4 / ;
+'Cells var
+
+:size (-n) @FID file:size #4 / dup !Cells ;
 ~~~
 
 And then, using the above, read in the data from the file
 to the image buffer.
 
 ~~~
-:load-image (s-)
+:load-image (s-n)
   file:R file:open !FID
   &Image size [ read-cell over store n:inc ] times drop
   @FID file:close ;
@@ -75,10 +88,14 @@ The rest is easy. Display the relevant header bits, then
 the cells, then the needed footer.
 
 ~~~
-'int32\_t_ngaImageCells_=_9139; s:format s:put nl
-'int32\_t_ngaImage[]_=_{        s:format s:put nl
+[ @Cells
+  'int32\_t_ngaImageCells_=_%n; s:format s:put nl
+  'int32\_t_ngaImage[]_=_{      s:format s:put nl
 
-&Image #3 + fetch  [ fetch-next n:put $, c:put EOL? ] times
+  &Image &Image #3 + fetch [ fetch-next n:put $, c:put EOL? ] times drop
 
-'}; s:put nl
+  '}; s:put nl
+] &Output capture-output
+
+&Output 'patch file:spew
 ~~~
