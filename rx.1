@@ -1,0 +1,29 @@
+.Dd February 2021
+.Dt RX 1
+.Os
+.Sh RX
+.Nm rx
+.Nd "a modern, pragmatic forth development system"
+.Sh SYNOPSIS
+.Nm
+.Op Fl f Ar filename
+.Op Ar filename Ar script-args
+.Sh DESCRIPTION
+rx is a modern, pragmatic Forth drawing influences from many sources.
+It's clean, elegant, tiny, and easy to grasp and adapt to various uses.
+
+.Nm
+runs programs written in rx.
+.Sh OPTIONS
+.Bl -tag -width -indent
+.It Fl f Ar filename
+Run any code blocks in the specified file.
+.It filename script-args
+Run code blocks in a single file. Pass script-args to the code being run.
+.El
+
+If invoked with no arguments,
+.Nm
+will run in interactive mode.
+.Sh AUTHORS
+.An Charles Childers Aq Mt crc@forthworks.com
