@@ -16,6 +16,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>
 #include <limits.h>
 #include <fcntl.h>
@@ -215,7 +216,35 @@ void io_filesystem_handler() {
 }
 
 void unix_system() {
-  system(string_extract(stack_pop()));
+  char *line;
+  char *args[128];
+  pid_t pid;
+  int status;
+
+  char **argv = args;
+  line = string_extract(stack_pop());
+
+  while (*line != '\0') {
+    while (*line == ' ' || *line == '\t' || *line == '\n')
+      *line++ = '\0';
+    *argv++ = line;
+    while (*line != '\0' && *line != ' ' && *line != '\t' && *line != '\n')
+      line++;
+  }
+
+  if ((pid = fork()) < 0) {
+    printf("*** ERROR: forking child process failed\n");
+    exit(1);
+  }
+  else if (pid == 0) {
+    if (execvp(*args, args) < 0) {
+      printf("*** ERROR: exec failed\n");
+      exit(1);
+    }
+  } else {
+  while (wait(&status) != pid)
+    ;
+  }
 }
 
 Handler UnixActions[] = {
