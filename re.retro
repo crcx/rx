@@ -39,7 +39,7 @@ file.
 
 ~~~
 #140 'cfg:MAX-LINE-LENGTH const
-#2000 'cfg:MAX-LINES const
+#2500 'cfg:MAX-LINES const
 ~~~
 
 ## The File Contents
@@ -261,9 +261,11 @@ otherwise blank line to return to the command processing mode.
   :add-space  dup ed:insert-line ;
   :store-line over ed:to-line s:copy n:inc ;
   :cleanup    n:dec ed:delete-line ;
+  :ruler   #6 [ '---------+ s:put ] times '---- s:put nl ;
 ---reveal---
   'Prompt var
   :cmd:e
+    ruler
     @Input s:to-number
     [ @Prompt [ @Prompt call ] if
       add-space s:get [ store-line ] sip '. s:eq? ] until cleanup ;
