@@ -1,0 +1,6 @@
+# Todo List
+
+- replace system() with wait()/fork()/execlp()
+- determine vm config limits
+- document re.retro
+
