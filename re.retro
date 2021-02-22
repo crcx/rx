@@ -72,7 +72,7 @@ Line display is trivial in this. I optionally support line numbers,
 controlled by setting `ShowLineNumbers` to `TRUE`.
 
 ~~~
-'ShowLineNumbers var
+TRUE 'ShowLineNumbers var-n
 
 :ed:show-line-number (-)
   @ShowLineNumbers [ dup n:put ': s:put tab ] if ;
@@ -142,8 +142,11 @@ afterwards. I also reset the stack.
 ~~~
 'Done var
 
+'Context var
+
 :edit
   [ &Heap [
+    @Context [ @Context call ] if
     reset ed:get-input ed:process-command
   ] v:preserve @Done ] until ;
 ~~~
@@ -259,9 +262,11 @@ otherwise blank line to return to the command processing mode.
   :store-line over ed:to-line s:copy n:inc ;
   :cleanup    n:dec ed:delete-line ;
 ---reveal---
+  'Prompt var
   :cmd:e
     @Input s:to-number
-    [ add-space s:get [ store-line ] sip '. s:eq? ] until cleanup ;
+    [ @Prompt [ @Prompt call ] if
+      add-space s:get [ store-line ] sip '. s:eq? ] until cleanup ;
 }}
 ~~~
 
@@ -348,6 +353,39 @@ The final startup process is:
 - run the editor command loop
 
 ~~~
+'CurrentLine var
+'OldLineNumberState var
+
+:display
+  'clear unix:system
+  @CurrentLine #10 - #0 n:max
+  @CurrentLine #10 + @Lines n:dec n:min
+  dup-pair @Lines n:dec 'abc 'cba reorder '%n-%n_of_%n s:format s:put nl display-range
+  nl ;
+
+'Count var
+
+:draw-ruler? @Count [ #10 gt? ] [ n:zero? ] bi or ;
+:pad     '____\t s:format s:put ;
+:ruler   #6 [ '---------+ s:put ] times '---- s:put nl ;
+:prompt  draw-ruler? [ pad ruler #1 !Count ] if &Count v:inc pad ;
+
+:cmd:`
+  #0 !Count
+  @Context [ @OldLineNumbers !ShowLineNumbers #0 !Context #0 !Prompt ]
+           [ @ShowLineNumbers !OldLineNumbers &ShowLineNumbers v:on
+             &prompt !Prompt
+             &display !Context ] choose ;
+
+:cmd:[ &CurrentLine [ #5 - #0 n:max     ] v:update ;
+:cmd:] &CurrentLine [ #5 + @Lines n:min ] v:update ;
+:cmd:g @Input s:to-number !CurrentLine ;
+
+&cmd:[ $[ ed:register-command
+&cmd:] $] ed:register-command
+&cmd:` $` ed:register-command
+&cmd:g $g ed:register-command
+
 #0 script:get-argument dup s:put nl &Filename s:copy
 &Filename file:exists? [ &Filename file:W file:open file:close ] -if
 load-file edit bye
