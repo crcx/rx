@@ -92,35 +92,6 @@ personal build.
 ~~~
 :unix:operation #8 io:scan-for io:invoke ;
 :unix:system (s-)  #0 unix:operation ;
-:unix:popen (sn-n) #1 unix:operation ;
-:unix:pclose (n-)  #2 unix:operation ;
-:unix:chdir (s-)   #3 unix:operation ;
-:unix:getenv (sa-) #4 unix:operation ;
-:unix:putenv (s-)  #5 unix:operation ;
-
-(s-s)  :unix:pipe
-         file:R unix:popen &file:read-line &unix:pclose bi ;
-
-(-s)   :unix:get-cwd
-         'pwd unix:pipe s:trim '/ s:append ;
-
-(-n)   :unix:count-files-in-cwd
-         'ls_-1_|_wc_-l unix:pipe s:trim s:to-number ;
-
-(q-)   :unix:for-each-file (q-)
-         'ls_-1_-p file:R unix:popen
-         unix:count-files-in-cwd
-         [ [ file:read-line s:temp over call ] sip ] times
-         unix:pclose drop ;
-
-{{
-  :start  swap buffer:set file:R unix:popen ;
-  :read   dup file:read dup buffer:add n:zero? ;
-  :finish unix:pclose buffer:size ;
----reveal---
-  :unix:slurp-pipe (as-n)
-    [ start &read until finish ] buffer:preserve ;
-}}
 ~~~
 
 
