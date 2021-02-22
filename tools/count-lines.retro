@@ -1,0 +1,6 @@
+#!/usr/local/bin/rx
+~~~
+#0 #0 script:get-argument [ drop n:inc ] file:for-each-line
+n:put nl
+~~~
+
