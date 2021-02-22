@@ -1,0 +1,29 @@
+Retro does not support forward parsing, but there are some ways
+to achieve this. In this, I show a means of adding a new version
+of the `interpret` word that handles parsing of strings with
+embedded spaces.
+
+This will *not* be added to the core Retro system.
+
+~~~
+{{
+  'Building var
+  'Target var
+
+  :end?  @Target [ s:length n:dec ] sip + fetch $" eq? ;
+  :build @Target '%s_%s s:format !Target ;
+  :lifetime compiling? [ s:keep ] [ s:temp ] choose ;
+  :extract @Target n:inc s:chop lifetime ;
+
+  :new-interpret
+    @Building
+  [ build end? [ &Building v:off extract lifetime ] if ]
+  [ dup fetch $" eq? [ &Building v:on s:temp !Target ]
+                     [ &interpret #2 + call ] choose ] choose ;
+
+  &new-interpret &interpret set-hook
+}}
+
+"hello new world!" s:put nl
+bye
+~~~

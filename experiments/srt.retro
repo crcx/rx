@@ -1,0 +1,98 @@
+# What problem did you solve using forth today?
+
+From https://groups.google.com/g/comp.lang.forth/c/-KQb7nqSGQ0
+
+dxforth writes:
+
+Using an online video subtitle downloader I found the resulting SRT file
+didn't work thanks to the timestamps appearing in truncated form. Instead
+of
+
+    00:01:30.500 --> 00:01:33.500
+
+it would appear as
+
+    00:01:30.5 --> 00:01:33.500
+
+The SRT ("SubRip Subtitle") specification requires timestamps show the
+decimal
+fraction to three digits. My system's media player didn't appreciate the
+truncation above with the result it displayed no subtitles at all! My
+experience with other SRT utilities suggests they would likely choke on
+it too.
+
+So Forth to the rescue (no GREPs used here). It was easy enough to
+isolate and reconstruct the timestamps. I also replaced the fractional
+character '.' with ',' as specified by the SRT spec. Something new I
+hadn't used before was to employ the command-line parser ARGV to
+conveniently split my strings...
+
+    !ARG ( a u -- ) \ Assign string for parsing
+    ARGV ( -- a u -1 | 0 ) \ Parse next blank delimited argument
+
+    2variable LINE \ line to be written
+    2variable TIME1 \ time1 string
+    2variable TIME2 \ time2 string
+
+    create TEMPLATE ," 00:00:00,000 --> 00:00:00,000"
+
+    \ Copy time data to template
+    : COPYDATA ( a u a2 -- ) >r
+    over 2+ c@ [char] : = >r
+    over 5 + c@ [char] : = >r
+    over 8 + c@ dup [char] , = swap [char] . = or
+    r> and r> and if \ valid time string
+    8 /split r@ swap cmove \ HH:MM:SS
+    1 /string r> 9 + dup 3 [char] 0 fill swap cmove \ frac
+    template count line 2! \ set output
+    end 2drop rdrop ;
+
+    : PROCSTAMP ( -- )
+    time1 2@ template 1+ copydata
+    time2 2@ template 18 + copydata ;
+
+    : PROCLINE ( a u -- )
+    2dup line 2! !arg
+    argv if
+    time1 2! argv if
+    s" -->" compare 0= if
+    argv if time2 2! procstamp then
+    then
+    then
+    then
+    line 2@ writetext ;
+
+    : PROCFILE ( -- )
+    begin pad 255 2dup blank readtext
+    while procline repeat 2drop ;
+
+If you solved a problem using forth today, why not share it.
+
+----
+
+This looked modestly interesting, so I decided to write a
+solution using Retro.
+
+~~~
+:rewrite [ $. [ $: ] case $, [ $: ] case ] s:map ;
+:split $: s:tokenize ;
+
+:hh dup #0 a:fetch s:put $: c:put ;
+:mm dup #1 a:fetch s:put $: c:put ;
+:ss dup #2 a:fetch s:put $, c:put ;
+:pad  [ #3 ] dip s:length - #0 n:max [ $0 c:put ] times ;
+:ff     #3 a:fetch [ s:put ] [ pad ] bi ;
+
+:timestamp rewrite split hh mm ss ff ;
+
+:left #0 a:fetch timestamp ;
+:mid #1 a:fetch '_%s_ s:format s:put ;
+:right #2 a:fetch timestamp ;
+
+:split ASCII:SPACE s:tokenize ;
+:rewrite split [ left ] [ mid ] [ right ] tri nl ;
+
+:timestamp? dup [ $: s:contains-char? ] [ '--> s:contains-string? ] bi or ;
+:process timestamp? [ rewrite ] if; s:put nl ;
+'test.srt [ process ] file:for-each-line
+~~~
