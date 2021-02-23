@@ -1,0 +1,15 @@
+#!/usr/local/bin/rx
+
+~~~
+'In var
+#0 script:get-argument file:open-for-reading nip !In
+
+@In file:read-line s:to-number dup n:put nl
+[ @In file:read-line s:put nl
+  @In file:read-line s:to-number
+  [ @In file:read drop ] times
+  @In file:read-line drop
+] times
+@In file:close
+~~~
+

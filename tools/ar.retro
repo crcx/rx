@@ -1,0 +1,37 @@
+#!/usr/local/bin/rx
+
+This generates an archive of files. It's currently only tested
+with plain text, so use caution if archiving binary files.
+
+The file format is currently very simple. An archive starts
+with a line containing the number of entries. This is followed
+by a file name, then the file size in bytes. Then data for the
+file, and then any other files.
+
+It's not robust, it's not scalable, and it's definitely not a
+thing that most people should use. But it's simple, and works
+well enough for my small tasks.
+
+#Entries
+filename
+length
+...
+filename
+length
+...
+
+~~~
+'Out var
+
+:name    dup s:put nl ;
+:data    file:open-for-reading swap dup n:put nl [ [ file:read c:put ] sip ] times file:close nl ;
+:archive name data ;
+
+:file:put @Out file:write ;
+#0 script:get-argument file:W file:open !Out
+&file:put &c:put set-hook
+script:arguments n:put nl
+script:arguments n:dec [ I n:inc script:get-argument archive ] indexed-times
+&c:put unhook
+@Out file:close
+~~~
