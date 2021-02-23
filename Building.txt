@@ -19,3 +19,14 @@ Then:
 
     ./rx update.retro
     make
+---------------------------------------------------------------
+
+The following C compilers have been tested and confirmed to
+work:
+
+- tcc
+- clang
+- gcc
+
+---------------------------------------------------------------
+

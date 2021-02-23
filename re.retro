@@ -1,4 +1,4 @@
-#!./rx
+#!/usr/local/bin/rx
 
 # retro-edit
 
@@ -355,39 +355,6 @@ The final startup process is:
 - run the editor command loop
 
 ~~~
-'CurrentLine var
-'OldLineNumberState var
-
-:display
-  'clear unix:system
-  @CurrentLine #10 - #0 n:max
-  @CurrentLine #10 + @Lines n:dec n:min
-  dup-pair @Lines n:dec 'abc 'cba reorder '%n-%n_of_%n s:format s:put nl display-range
-  nl ;
-
-'Count var
-
-:draw-ruler? @Count [ #10 gt? ] [ n:zero? ] bi or ;
-:pad     '____\t s:format s:put ;
-:ruler   #6 [ '---------+ s:put ] times '---- s:put nl ;
-:prompt  draw-ruler? [ pad ruler #1 !Count ] if &Count v:inc pad ;
-
-:cmd:`
-  #0 !Count
-  @Context [ @OldLineNumbers !ShowLineNumbers #0 !Context #0 !Prompt ]
-           [ @ShowLineNumbers !OldLineNumbers &ShowLineNumbers v:on
-             &prompt !Prompt
-             &display !Context ] choose ;
-
-:cmd:[ &CurrentLine [ #5 - #0 n:max     ] v:update ;
-:cmd:] &CurrentLine [ #5 + @Lines n:min ] v:update ;
-:cmd:g @Input s:to-number !CurrentLine ;
-
-&cmd:[ $[ ed:register-command
-&cmd:] $] ed:register-command
-&cmd:` $` ed:register-command
-&cmd:g $g ed:register-command
-
 #0 script:get-argument dup s:put nl &Filename s:copy
 &Filename file:exists? [ &Filename file:W file:open file:close ] -if
 load-file edit bye

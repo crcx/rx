@@ -1,8 +1,4 @@
 PREFIX ?= /usr/local
-DATADIR ?= $(PREFIX)/share/RETRO12
-DOCSDIR ?= $(PREFIX)/share/doc/RETRO12
-EXAMPLESDIR ?= $(PREFIX)/share/examples/RETRO12
-MANDIR ?= $(PREFIX)/man/man1
 
 default:
 	$(CC) $(CFLAGS) rx.c -o rx
