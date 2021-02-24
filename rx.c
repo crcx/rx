@@ -219,13 +219,28 @@ void io_filesystem_handler() {
 void unix_dir() {
   DIR *dir;
   struct dirent *entry;
+  char files[65536];
+  int i;
+  CELL to;
+  char *src;
 
+  to = stack_pop();
+  i = 0;
+  files[i] = '\0';
   if ((dir = opendir(".")) == NULL)
     perror("opendir() error");
   else {
-    while ((entry = readdir(dir)) != NULL)
-      if (entry->d_name[0] != '.' && entry->d_type !=  DT_DIR)
-        printf("%s\n", entry->d_name);
+    while ((entry = readdir(dir)) != NULL) {
+      if (entry->d_name[0] != '.' && entry->d_type !=  DT_DIR) {
+        src = entry->d_name;
+        while ((files[i] = *src++)) {
+          i++;
+        }
+        files[i++] = '\n';
+      }
+    }
+    files[--i] = '\0';
+    stack_push(string_inject(files, to));
     closedir(dir);
   }
 }

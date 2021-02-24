@@ -92,7 +92,8 @@ personal build.
 ~~~
 :unix:operation #8 io:scan-for io:invoke ;
 :unix:system    (s-)  #0 unix:operation ;
-:unix:file-list (-a)  #1 unix:operation ;
+:unix:file-list (-a)
+  s:empty #1 unix:operation ASCII:LF s:tokenize ;
 ~~~
 
 
