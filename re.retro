@@ -342,17 +342,14 @@ Use `q` to quit the editor.
 
 :cmd:;
   @Input dup s:length n:zero?
-  [ drop &Filename 'rx_%s s:format ] if unix:system ;
-
-:cmd:?
-  @Input s:length n:-zero?
-  [ @Input 'retro-describe_%s s:format unix:system ] if ;
+  [ drop &Filename 'rx_%s s:format ]
+  [ 'rx_%s s:format                ] choose unix:system ;
 ~~~
 
 ## Register The Commands
 
 ~~~
-{ ',p#/axdiefwlqnN;? [ ] s:for-each }
+{ ',p#/axdiefwlqnN; [ ] s:for-each }
 [ [ 'cmd:%c s:format d:lookup d:xt fetch ] sip ed:register-command ]
 a:for-each
 ~~~
