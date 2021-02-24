@@ -1,0 +1,8 @@
+#!/usr/local/bin/rx
+
+~~~
+[ #0 script:get-argument
+  '-l [ unix:file-list [ s:put nl ] a:for-each ] s:case
+  drop unix:file-list [ s:put sp ] a:for-each nl
+] call
+~~~
