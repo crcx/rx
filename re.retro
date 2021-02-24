@@ -34,6 +34,13 @@ Look further in the source for a table of commands.
 
 ## Configuration
 
+On startup, this loads a working file specified here. Use the
+commands later to load a specific file if needed.
+
+~~~
+'scratch 'SCRATCH s:const
+~~~
+
 The editor needs a max line length and max number of lines per
 file.
 
@@ -297,12 +304,15 @@ upon completion.
 }}
 ~~~
 
-
 ~~~
+:create-if-not-present
+  &Filename file:exists? [ &Filename file:W file:open file:close ] -if ;
+
 :erase-all
   #0 cfg:MAX-LINES [ #0 over ed:to-line store n:inc ] times drop ;
 
 :load-file
+  create-if-not-present
   #0 &Filename [ over ed:to-line s:copy n:inc ] file:for-each-line
   !Lines ;
 
@@ -332,7 +342,7 @@ Use `q` to quit the editor.
 
 :cmd:;
   @Input dup s:length n:zero?
-  [ drop &Filename 'retro_%s s:format ] if unix:system ;
+  [ drop &Filename 'rx_%s s:format ] if unix:system ;
 
 :cmd:?
   @Input s:length n:-zero?
@@ -355,7 +365,12 @@ The final startup process is:
 - run the editor command loop
 
 ~~~
-#0 script:get-argument dup s:put nl &Filename s:copy
-&Filename file:exists? [ &Filename file:W file:open file:close ] -if
-load-file edit bye
+:cmd:?
+  here n:put nl ;
+&cmd:? $? ed:register-command
+~~~
+
+~~~
+SCRATCH [ s:put nl ] [ &Filename s:copy ] bi
+cmd:l edit bye
 ~~~
