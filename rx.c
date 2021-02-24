@@ -11,6 +11,7 @@
   ---------------------------------------------------------------------*/
 
 #include <ctype.h>
+#include <dirent.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -215,6 +216,20 @@ void io_filesystem_handler() {
   FileActions[stack_pop()]();
 }
 
+void unix_dir() {
+  DIR *dir;
+  struct dirent *entry;
+
+  if ((dir = opendir(".")) == NULL)
+    perror("opendir() error");
+  else {
+    while ((entry = readdir(dir)) != NULL)
+      if (entry->d_name[0] != '.' && entry->d_type !=  DT_DIR)
+        printf("%s\n", entry->d_name);
+    closedir(dir);
+  }
+}
+
 void unix_system() {
   char *line;
   char *args[128];
@@ -248,7 +263,7 @@ void unix_system() {
 }
 
 Handler UnixActions[] = {
-  unix_system
+  unix_system, unix_dir
 };
 
 void io_unix_query() {
