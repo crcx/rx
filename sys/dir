@@ -1,8 +1,18 @@
 #!/usr/local/bin/rx
 
 ~~~
+:display:long
+  unix:file-list [ s:put nl ] a:for-each ;
+
+:match?
+  dup #1 script:get-argument s:contains-string? ;
+
+:display:matching
+  unix:file-list [ match? [ s:put sp ] [ drop ] choose ] a:for-each nl ;
+
 [ #0 script:get-argument
-  '-l [ unix:file-list [ s:put nl ] a:for-each ] s:case
+  'long     [ display:long ] s:case
+  'matching [ display:matching ] s:case
   drop unix:file-list [ s:put sp ] a:for-each nl
 ] call
 ~~~
