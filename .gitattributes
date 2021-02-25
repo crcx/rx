@@ -1,2 +1,4 @@
+sys/* linguist-language=Forth
 *.retro linguist-language=Forth
 *.muri linguist-language=Assembly
+*.c linguist-language=C

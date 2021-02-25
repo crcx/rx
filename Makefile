@@ -1,14 +1,14 @@
 PREFIX ?= /usr/local
 
 default:
-	$(CC) $(CFLAGS) rx.c -o rx
-	./rx -f retro.forth -f devices.retro -f pack.retro > bootstrap
-	cat bootstrap >>rx
-	rm bootstrap
+	cd sys && $(CC) $(CFLAGS) rx.c -o rx
+	cd sys && ./rx -f retro.forth -f devices.retro -f strip-commentary > bootstrap
+	cd sys && cat bootstrap >>rx
+	cd sys && rm bootstrap
 
-install: default
+install:
 	install -m 755 -d -- $(DESTDIR)$(PREFIX)/bin
-	install -c -m 755 rx $(DESTDIR)$(PREFIX)/bin/rx
+	install -c -m 755 sys/rx $(DESTDIR)$(PREFIX)/bin/rx
 
 clean:
-	rm -f rx
+	rm -f sys/rx sys/rx.core
