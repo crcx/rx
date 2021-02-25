@@ -97,5 +97,5 @@ the cells, then the needed footer.
   '}; s:put nl
 ] &Output capture-output
 
-&Output 'patch file:spew
+&Output 'patch-data file:spew
 ~~~

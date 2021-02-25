@@ -16,7 +16,7 @@
 :examine dup 'int32\_t_ngaImageCells_= s:format s:begins-with? @Done or !Done ;
 
 [ 'rx.c [ examine @Done [ drop ] if; s:put nl ] file:for-each-line
-  'patch [ s:put nl ] file:for-each-line
+  'patch-data [ s:put nl ] file:for-each-line
 ] &Output capture-output
 
 &Output 'rx.c file:spew

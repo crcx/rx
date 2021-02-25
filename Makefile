@@ -1,4 +1,5 @@
 PREFIX ?= /usr/local
+CFLAGS=-O3 -static
 
 default:
 	cd sys && $(CC) $(CFLAGS) rx.c -o rx

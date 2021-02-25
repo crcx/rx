@@ -1,0 +1,9 @@
+~~~
+:a:unpack [ ] a:for-each ;
+
+{ { 'Assemble [ 'muri include ] }
+  { 'Export__ [ 'image-to-c include ] }
+  { 'Patch___ [ 'patch include ] }
+  { 'Cleanup_ [  { 'patch-data 'ngaImage } [ file:delete ] a:for-each ] }
+} [ a:unpack [ s:put tab ] dip call 'done s:put nl ] a:for-each
+~~~

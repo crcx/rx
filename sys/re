@@ -342,8 +342,8 @@ Use `q` to quit the editor.
 
 :cmd:;
   @Input dup s:length n:zero?
-  [ drop &Filename 'rx_%s s:format ]
-  [ 'rx_%s s:format                ] choose unix:system ;
+  [ drop &Filename './rx_%s s:format ]
+  [ './rx_%s s:format                ] choose unix:system ;
 ~~~
 
 ## Register The Commands
