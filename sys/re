@@ -287,6 +287,7 @@ otherwise blank line to return to the command processing mode.
 :cmd:f @Input &Filename s:copy ;
 ~~~
 
+
 ### Saving
 
     | w |            | save file                                       |
@@ -319,6 +320,13 @@ upon completion.
 :cmd:l erase-all load-file ;
 ~~~
 
+
+### New
+
+~~~
+:cmd:* SCRATCH &Filename s:copy erase-all #1 !Lines ;
+~~~
+
 ### Quit
 
     | q |            | quit retro-edit                                 |
@@ -340,7 +348,7 @@ Use `q` to quit the editor.
 :cmd:n @Input s:to-number ed:to-line dup '__ s:prepend swap s:copy ;
 :cmd:N @Input s:to-number ed:to-line dup #2 + swap s:copy ;
 
-:cmd:;
+:cmd::
   @Input dup s:length n:zero?
   [ drop &Filename './rx_%s s:format ]
   [ './rx_%s s:format                ] choose unix:system ;
@@ -349,7 +357,7 @@ Use `q` to quit the editor.
 ## Register The Commands
 
 ~~~
-{ ',p#/axdiefwlqnN; [ ] s:for-each }
+{ ',p#/axdiefwlqnN:* [ ] s:for-each }
 [ [ 'cmd:%c s:format d:lookup d:xt fetch ] sip ed:register-command ]
 a:for-each
 ~~~
@@ -368,6 +376,6 @@ The final startup process is:
 ~~~
 
 ~~~
-SCRATCH [ s:put nl ] [ &Filename s:copy ] bi
-cmd:l edit bye
+SCRATCH &Filename s:copy
+cmd:l 'Ready s:put nl edit bye
 ~~~

@@ -29,3 +29,11 @@ goal of gradually reducing my time on BSD, macOS, and Linux.
 As I do this, I'll work on making my system better, and also
 start on the hardware side.
 
+Note to self: this is a /textual/ system. All files are plain
+text, other than the VM (rx) binary. No graphical display or
+pointing devices will be required to use.
+
+Second note: simple keyboard input only. Avoid use of complex
+key combinations in favor of simpler models with fewer finger
+contortions.
+
