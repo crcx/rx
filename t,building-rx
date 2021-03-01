@@ -4,6 +4,7 @@ Requirements:
 
 - make
 - C compiler
+- Unix-style host
 
 Process:
 
@@ -17,7 +18,7 @@ First, build `rx` as shown above.
 
 Then:
 
-    ./rx update.retro
+    ./rx update-rx
     make
 ---------------------------------------------------------------
 
