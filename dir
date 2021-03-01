@@ -10,9 +10,13 @@
 :display:matching
   unix:file-list [ match? [ s:put sp ] [ drop ] choose ] a:for-each nl ;
 
+:display:not-matching
+  unix:file-list [ match? [ drop ] [ s:put sp ] choose ] a:for-each nl ;
+
 [ #0 script:get-argument
   'long     [ display:long ] s:case
   'matching [ display:matching ] s:case
+  'not-matching [ display:not-matching ] s:case
   drop unix:file-list [ s:put sp ] a:for-each nl
 ] call
 ~~~
