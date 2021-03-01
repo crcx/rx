@@ -33,7 +33,7 @@ A uuencoded file starts with a header line of the form:
 I am hard coding the mode as 0644.
 
 ~~~
-:header (-) #0 script:get-argument 'begin_0644_%s1\n s:format s:put ;
+:header (-) #0 script:get-argument 'begin_0644_%s\n s:format s:put ;
 ~~~
 
 
