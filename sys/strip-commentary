@@ -34,6 +34,7 @@ commentary up to date, and has lead to better commented code.
 :condense (s-s|0)
   s:trim dup s:length n:zero? [ drop #0 ] if ;
 
+nl (ensure_that_the_block_delimiter_starts_on_a_new_line)
 '~~~ s:put nl
 'retro.forth [ condense 0; s:put nl ] unu
 'devices.retro [ condense 0; s:put nl ] unu
