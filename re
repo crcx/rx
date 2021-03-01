@@ -300,13 +300,16 @@ upon completion.
   :with-file  &Filename file:open-for-writing [ swap call ] sip file:close ;
   :file:nl    ASCII:LF over file:write ;
   :write-line I ed:to-line [ over file:write ] s:for-each file:nl ;
+  :write-file [ @Lines [ write-line ] indexed-times ] with-file ;
+  :select     @Input s:length n:-zero? [ cmd:f ] if ;
 ---reveal---
-  :cmd:w [ @Lines [ write-line ] indexed-times ] with-file @Lines n:put nl ;
+  :cmd:w select write-file @Lines n:put nl ;
 }}
 ~~~
 
 ~~~
 :create-if-not-present
+  @Input s:length n:-zero? [ cmd:f ] if
   &Filename file:exists? [ &Filename file:W file:open file:close ] -if ;
 
 :erase-all
@@ -317,7 +320,7 @@ upon completion.
   #0 &Filename [ over ed:to-line s:copy n:inc ] file:for-each-line
   !Lines ;
 
-:cmd:l erase-all load-file ;
+:cmd:l erase-all load-file @Lines n:put nl ;
 ~~~
 
 

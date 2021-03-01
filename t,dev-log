@@ -37,3 +37,42 @@ Second note: simple keyboard input only. Avoid use of complex
 key combinations in favor of simpler models with fewer finger
 contortions.
 
+2021.02.27
+
+Under macOS, I had to make a small tweak to the `strip-commentary`
+tool before rx would run. But it's now working, though I need to
+do more testing. This isn't a big priority; I'll be without a
+Mac for a while.
+
+I've decided to just use a single directory; the repository is
+just a direct reflection of my working environment this way.
+
+Some tooling plans:
+
+    dir not matching <text>
+    I need to add this
+
+New tools:
+
+    backup
+    restore
+    cls
+    duplicate file
+    get file info
+    findstr
+    ar-merge
+    more
+    rename
+
+Todo:
+
+    rename `listener` to `forth`
+
+2021.03.01
+
+I've consolidated down to one directory.
+
+I have added support for setting the filename via the `l` and
+`w` commands in re. This is *much* nicer than having to enter
+the name, then the command.
+
