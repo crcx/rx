@@ -1,0 +1,47 @@
+~~~
+:reset-terminal '\^c\^[0;0H s:format s:put ;
+
+:select (s-n)
+  'black    [ #30 ] s:case
+  'red      [ #31 ] s:case
+  'green    [ #32 ] s:case
+  'yellow   [ #33 ] s:case
+  'blue     [ #34 ] s:case
+  'magenta  [ #35 ] s:case
+  'cyan     [ #36 ] s:case
+  drop #37 ;
+
+:foreground (n-n) ;
+:background (n-n) #10 + ;
+
+:set-color '\^[%nm s:format s:put ;
+
+:clear '\^[2J\^[0;0H s:format s:put nl ;
+
+
+#0 script:arguments
+[ dup script:get-argument
+  'black   [ 'black   select foreground set-color ] s:case
+  'red     [ 'red     select foreground set-color ] s:case
+  'green   [ 'green   select foreground set-color ] s:case
+  'yellow  [ 'yellow  select foreground set-color ] s:case
+  'blue    [ 'blue    select foreground set-color ] s:case
+  'magenta [ 'magenta select foreground set-color ] s:case
+  'cyan    [ 'cyan    select foreground set-color ] s:case
+  'white   [ 'white   select foreground set-color ] s:case
+
+  'on-black   [ 'black   select background set-color ] s:case
+  'on-red     [ 'red     select background set-color ] s:case
+  'on-green   [ 'green   select background set-color ] s:case
+  'on-yellow  [ 'yellow  select background set-color ] s:case
+  'on-blue    [ 'blue    select background set-color ] s:case
+  'on-magenta [ 'magenta select background set-color ] s:case
+  'on-cyan    [ 'cyan    select background set-color ] s:case
+  'on-white   [ 'white   select background set-color ] s:case
+
+  'reset [ reset-terminal ] s:case
+  'clear [ clear ] s:case
+  drop n:inc ] times
+drop
+~~~
+
