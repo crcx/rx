@@ -379,6 +379,6 @@ The final startup process is:
 ~~~
 
 ~~~
-SCRATCH &Filename s:copy
+SCRATCH &Filename s:copy s:empty !Input
 cmd:l 'Ready s:put nl edit bye
 ~~~
