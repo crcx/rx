@@ -1,59 +1,30 @@
-This is my personal, experimental branch of RetroForth.
 
-It is *not* intended to replace the main RetroForth system, but
-to give me a basis from which to explore some ideas and setup a
-smaller, more personal computing environment. It's also a place
-where I can experiment with things before bringing them into the
-main system.
+   |\  \|/   Charles Childer's Personal Computing System
+   |/   X    a Unix Kernel, Retro Forth, and a non-POSIX
+   |\  /|\   environment written in Forth
 
 ---------+---------+---------+---------+---------+---------+----
 
-It's a different take on the language, and one I don't expect
-will appeal to most.
+Files starting with t, are text documents.
+Files starting wiht a, are archives.
+Files with no suffix are Forth programs.
 
-In common with the main system:
+Special Cases:
 
-- retro.muri
-- retro.forth
+    Makefile
+    rx.c
+    retro.forth
+    retro.muri
+    devices.retro
 
-Differences:
-
-- everything else.
-
----------+---------+---------+---------+---------+---------+----
-
-The VM is defined in rx.c. This implements the instruction set,
-I/O devices (keyboard, screen, files, rng, and a few Unix
-environment items), and embeds a copy of the minimal image.
-Higher level code (retro.forth, devices.retro, etc) are appended
-to the binary. This code will be compiled when the VM is run.
-
-The image contains a compiled memory image for the VM. This is
-built from the assembly source in `retro.muri`, and is assembled
-using `muri.retro`. The raw data is exported to a C array, and
-is copied into the `retro.c` to allow a single file deployment
-of a complete system.
-
-The main sources for the system are written in Forth, using the
-VM and the words provided by the default image. `retro.forth`
-contains most of the functionality. `devices.retro` contains
-code to use the I/O devices provided by the VM. Both of these
-are appended to the `rx` binary.
-
-The `pack.retro` program is used to strip comments and indention
-from the main sources prior to appending. This is optional;
-using it makes the binary smaller.
+These are used to build the VM (the `rx` binary)
 
 ---------+---------+---------+---------+---------+---------+----
 
-In this branch, I'm starting to explore the possibility of a
-Retro-only (or Retro+OS Kernel) system. This means I need to
-design my user interface, and all tools to support it. I must
-be able to edit, extend, and manage everything using only code
-I have written.
+Starting:
 
-It won't be easy. And it might not be comfortable to use, but
-it will be mine. I'll learn from this, refine my tools, and
-continue exploring personal computing.
+    make
+    ./rx re
 
----------+---------+---------+---------+---------+---------+----
+You will then be in `re`, the line editor.
+

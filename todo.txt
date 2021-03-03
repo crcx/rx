@@ -1,5 +1,0 @@
-# Todo List
-
-- determine vm config limits
-- document re.retro
-
