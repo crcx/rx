@@ -1,4 +1,4 @@
 ~~~
-'\^[2J\n\^[0;0H s:format s:put nl
+'\^[2J\n\^[0;0H s:format s:put
 ~~~
 
