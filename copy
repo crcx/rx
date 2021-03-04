@@ -1,0 +1,7 @@
+~~~
+script:arguments #2 -eq? [ 'err:_missing_args s:put nl bye ] if
+
+here #0 script:get-argument file:slurp
+here #1 script:get-argument file:spew
+~~~
+
