@@ -1,3 +1,5 @@
+#!/bin/sh
+
 ~~~
 :reset-terminal '\^c\^[0;0H s:format s:put ;
 
@@ -20,7 +22,7 @@
 
 
 #0 script:arguments
-[ dup script:get-argument
+ [ I script:get-argument
   'black   [ 'black   select foreground set-color ] s:case
   'red     [ 'red     select foreground set-color ] s:case
   'green   [ 'green   select foreground set-color ] s:case
@@ -41,7 +43,7 @@
 
   'reset [ reset-terminal ] s:case
   'clear [ clear ] s:case
-  drop n:inc ] times
+  drop ] indexed-times
 drop
 ~~~
 
