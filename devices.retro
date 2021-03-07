@@ -80,20 +80,21 @@ personal build.
 
 ~~~
 :script:operation #9 io:scan-for io:invoke ;
-:script:arguments (-n)                   #0 script:operation ;
-:script:get-argument (n-s)  s:empty swap #1 script:operation ;
-:include  (s-)                           #2 script:operation ;
-:script:name (-s)           s:empty      #3 script:operation ;
+:arguments (-n)                   #0 script:operation ;
+:get-argument (n-s)  s:empty swap #1 script:operation ;
+:include  (s-)                    #2 script:operation ;
+:script:name (-s)    s:empty      #3 script:operation ;
 ~~~
 
 
 ## Unix
 
 ~~~
-:unix:operation #8 io:scan-for io:invoke ;
-:unix:system    (s-)  #0 unix:operation ;
-:unix:file-list (-a)
-  s:empty #1 unix:operation ASCII:LF s:tokenize ;
+:run-command (s-)
+  './rx_%s s:format #0 #8 io:scan-for io:invoke ;
+
+:file-list   (-a)
+  s:empty #1 #8 io:scan-for io:invoke ASCII:LF s:tokenize ;
 ~~~
 
 

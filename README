@@ -28,3 +28,10 @@ Starting:
 
 You will then be in `re`, the line editor.
 
+Once `re` is running, try entering:
+
+    lt,using-re
+    ,
+
+For some helpful hints on interacting with it.
+

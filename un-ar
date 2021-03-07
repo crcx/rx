@@ -1,5 +1,3 @@
-#!/usr/local/bin/rx
-
 This is un-ar, an un-archiver. Pass it a file created by
 `ar.retro` to extract the files.
 
@@ -26,7 +24,7 @@ The filename is passed in via the command line. Open it, save
 the pointer.
 
 ~~~
-#0 script:get-argument file:open-for-reading nip !In
+#0 get-argument file:open-for-reading nip !In
 ~~~
 
 I define a helper that will be used write data to the output

@@ -1,5 +1,3 @@
-#!/usr/bin/env retro
-
 # uudecode
 
 This is an implementation of `uudecode` in Retro. This takes a
@@ -63,7 +61,7 @@ data and decode it.
 Finally, load the file and iterate over each line.
 
 ~~~
-#0 script:get-argument
+#0 get-argument
 [ s:keep
   discard-header discard-empty discard-end
   fetch-next #32 - dup #45 eq?

@@ -22,7 +22,7 @@ First, gather the command line arguments. If no word name
 was passed, just exit.
 
 ~~~
-script:arguments n:zero? [ bye ] if
+arguments n:zero? [ bye ] if
 ~~~
 
 ~~~
@@ -163,6 +163,6 @@ This checks the command line arguments and calls the proper words to
 handle each case.
 
 ~~~
-script:arguments [ I script:get-argument find-and-display-entry ]
+arguments [ I get-argument find-and-display-entry ]
 indexed-times
 ~~~

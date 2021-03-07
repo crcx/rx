@@ -1,5 +1,3 @@
-#!/bin/sh
-
 ~~~
 :reset-terminal '\^c\^[0;0H s:format s:put ;
 
@@ -21,8 +19,8 @@
 :clear '\^[2J\^[0;0H s:format s:put nl ;
 
 
-#0 script:arguments
- [ I script:get-argument
+#0 arguments
+ [ I get-argument
   'black   [ 'black   select foreground set-color ] s:case
   'red     [ 'red     select foreground set-color ] s:case
   'green   [ 'green   select foreground set-color ] s:case

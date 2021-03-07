@@ -1,5 +1,3 @@
-#!/usr/bin/env retro
-
 # uuencode
 
 This is an implementation of `uuencode` in Retro. This takes a
@@ -11,7 +9,7 @@ file name and renders the uuencoded data to standard output.
 First, determine the size of the file.
 
 ~~~
-#0 script:get-argument file:R file:open
+#0 get-argument file:R file:open
 &file:size &file:close bi 'SIZE const
 ~~~
 
@@ -20,7 +18,7 @@ into memory.
 
 ~~~
 'Data d:create  SIZE allot
-&Data #0 script:get-argument file:slurp
+&Data #0 get-argument file:slurp
 ~~~
 
 
@@ -33,7 +31,7 @@ A uuencoded file starts with a header line of the form:
 I am hard coding the mode as 0644.
 
 ~~~
-:header (-) #0 script:get-argument 'begin_0644_%s\n s:format s:put ;
+:header (-) #0 get-argument 'begin_0644_%s\n s:format s:put ;
 ~~~
 
 

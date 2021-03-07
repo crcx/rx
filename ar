@@ -1,5 +1,3 @@
-#!/usr/local/bin/rx
-
 This generates an archive of files. It's currently only tested
 with plain text, so use caution if archiving binary files.
 
@@ -48,7 +46,7 @@ The top level part gets the filename for the archive and stores
 the file pointer in `Out`.
 
 ~~~
-#0 script:get-argument file:open-for-writing !Out
+#0 get-argument file:open-for-writing !Out
 ~~~
 
 Then I replace `c:put` with `file:put` so I can just use the
@@ -62,13 +60,13 @@ The first line in the archive is the number of files in the
 archive.
 
 ~~~
-script:arguments n:dec n:put nl
+arguments n:dec n:put nl
 ~~~
 
 Then loop over the files, copying them in
 ~~~
-script:arguments n:dec
-[ I n:inc script:get-argument archive ] indexed-times
+arguments n:dec
+[ I n:inc get-argument archive ] indexed-times
 ~~~
 
 And cleanup by reverting `c:put` and closing the archive file.

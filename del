@@ -1,4 +1,4 @@
 ~~~
-#0 script:get-argument file:delete
+#0 get-argument file:delete
 ~~~
 

@@ -1,7 +1,7 @@
 ~~~
-script:arguments #2 -eq? [ 'err:_missing_args s:put nl bye ] if
+arguments #2 -eq? [ 'err:_missing_args s:put nl bye ] if
 
-here #0 script:get-argument file:slurp
-here #1 script:get-argument file:spew
+here #0 get-argument file:slurp
+here #1 get-argument file:spew
 ~~~
 

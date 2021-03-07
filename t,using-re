@@ -1,0 +1,12 @@
+You are interacting with `re`, the line editor that serves as
+the user interface to the rx system.
+
+This is a line oriented editor. You interact with it by typing
+commands. A command is a ningle character, followed by any data
+the command needs.
+
+As an example, the `p` command displays a portion of the current
+file. This is followed by either a line number, or a range of
+lines as `first,last`. Try it by entering `p1`.
+
+
