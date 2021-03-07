@@ -254,6 +254,10 @@ void unix_system() {
   char **argv = args;
   line = string_extract(stack_pop());
 
+  int i;
+  for(i = 0; i < 128; i++)
+    args[i] = 0;
+
   while (*line != '\0') {
     while (*line == ' ' || *line == '\t' || *line == '\n')
       *line++ = '\0';
@@ -267,8 +271,9 @@ void unix_system() {
     exit(1);
   }
   else if (pid == 0) {
-    if (execvp(*args, args) < 0) {
-      printf("*** ERROR: exec failed\n");
+    int e = execvp(*args, args);
+    if (e < 0) {
+      printf("*** ERROR: exec failed with %d\n", e);
       exit(1);
     }
   } else {
