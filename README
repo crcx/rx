@@ -1,8 +1,7 @@
 
-   |\  \|/   Charles Childer's Personal Computing System
-   |/   X    a Unix Kernel, Retro Forth, and a non-POSIX
-   |\  /|\   environment written in Forth
-
+|\ |V| /|\ |\ /\  Charles Childers' Personal Computing System
+|/ | |  |  |/ \/  a Unix Kernel, Retro Forth, and a non-POSIX
+|\ | |  |  |\ /\  environment written in Forth
 ---------+---------+---------+---------+---------+---------+----
 
 Files starting with t, are text documents.

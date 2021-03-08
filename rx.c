@@ -29,7 +29,7 @@
 #define CELL_MIN INT_MIN + 1
 #define CELL_MAX INT_MAX - 1
 
-#define IMAGE_SIZE   2000000      /* Amount of RAM, in cells           */
+#define IMAGE_SIZE 64000000      /* Amount of RAM, in cells           */
 #define ADDRESSES    128000       /* Depth of address stack            */
 #define STACK_DEPTH  128000       /* Depth of data stack               */
 
