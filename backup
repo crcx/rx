@@ -1,0 +1,42 @@
+This is used to generate a backup of the working directory
+using the `ar` tool. This can be restored using `un-ar`, or
+one can easily extract manually or by writing an un-ar of
+their own.
+
+Delete the prior `a,backup`.
+
+~~~
+'del_a,backup run-command
+~~~
+
+Reserve space for the file listing, and set the `buffer:` words
+to operate on this.
+
+~~~
+:place [ , ] s:for-each ;
+
+'FileList d:create
+  'ar_a,backup_ place here buffer:set #65536 allot
+~~~
+
+Copy the file names to the FileList buffer. Exclude the `rx`
+binary.
+
+~~~
+:merge [ buffer:add ] s:for-each #32 buffer:add ;
+file-list [ dup 'rx s:eq? [ drop ] [ merge ] choose ] a:for-each
+~~~
+
+The trailing space will cause a problem, so remove it.
+
+~~~
+buffer:get drop
+~~~
+
+Then just run the assembled command line to create the new
+backup.
+
+~~~
+&FileList run-command
+~~~
+
