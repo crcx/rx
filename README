@@ -4,33 +4,19 @@
 |\ | |  |  |\ /\  environment written in Forth
 ---------+---------+---------+---------+---------+---------+----
 
-Files starting with t, are text documents.
-Files starting wiht a, are archives.
+File Naming Conventions
+-----------------------
+[type,]filename
+
+Types:
+
+  t    text
+  a    archive
+  tsv  tab separated values
+  csv  comma separated values
+
 Files with no suffix are Forth programs.
 
-Special Cases:
-
-    Makefile
-    rx.c
-    retro.forth
-    retro.muri
-    devices.retro
-
-These are used to build the VM (the `rx` binary)
-
----------+---------+---------+---------+---------+---------+----
-
-Starting:
-
-    make
-    ./rx re
-
-You will then be in `re`, the line editor.
-
-Once `re` is running, try entering:
-
-    lt,using-re
-    ,
-
-For some helpful hints on interacting with it.
+On startup you are in `re`. Enter `lt,quick-start` then `,`
+for help.
 
