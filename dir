@@ -1,3 +1,26 @@
+`dir` is used to display a directory listing.
+
+This has three modes of operation:
+
+    dir
+
+When invoked with no arguments, this will display the files
+(as returned by `file-list`) in a horizontal format.
+
+    dir matching text
+
+When invoked like this, it will display the file names that
+contain the specified string.
+
+    dir not-matching text
+
+When invoked like this, it will display the file names that
+do not contain the specified string.
+
+    dir long
+
+When invoked with `long`, this will display a vertical listing.
+
 ~~~
 :display:long
   file-list [ s:put nl ] a:for-each ;
