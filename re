@@ -353,8 +353,7 @@ Use `q` to quit the editor.
 
 :cmd::
   @Input dup s:length n:zero?
-  [ drop &Filename './rx_%s s:format ]
-  [ './rx_%s s:format                ] choose unix:system ;
+  [ drop &Filename ] if run-command ;
 ~~~
 
 ## Register The Commands
@@ -380,5 +379,13 @@ The final startup process is:
 
 ~~~
 SCRATCH &Filename s:copy s:empty !Input
-cmd:l 'Ready s:put nl edit bye
+erase-all load-file
+{ 'RETRO
+  'Ready.
+} [ s:put nl ] a:for-each
+edit bye
 ~~~
+
+{ '|\_|V|_/|\_|\_/\__Charles_Childers'_Personal_Computing_System
+  '|/_|_|__|__|/_\/__a_Unix_Kernel,_Retro_Forth,_and_a_non-POSIX
+  '|\_|_|__|__|\_/\__environment_written_in_Forth }

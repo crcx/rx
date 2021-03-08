@@ -77,11 +77,11 @@ Read in the file.
 
 The final part is to export the image as a C array. To keep
 line length to a reasonible length, I have a counter and add
-a newline after 18 values.
+a newline after 20 values.
 
 ~~~
 'Count var
-:EOL? &Count v:inc @Count #18 eq? [ nl #0 !Count ] if ;
+:EOL? &Count v:inc @Count #20 eq? [ nl #0 !Count ] if ;
 ~~~
 
 The rest is easy. Display the relevant header bits, then
