@@ -1,3 +1,8 @@
+This provides access to colors via ANSI/VT100 escape sequences.
+With this, you can do things like:
+
+    terminal white on-blue clear
+
 ~~~
 :reset-terminal '\^c\^[0;0H s:format s:put ;
 

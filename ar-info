@@ -1,16 +1,4 @@
-This is un-ar, an un-archiver. Pass it a file created by
-`ar.retro` to extract the files.
-
-As a recap of the file format.
-
-    # of files
-    filename
-    length in bytes
-    ... data ...
-    filename
-    length in bytes
-    ... data ...
-    [ ... repeat for each file ... ]
+This displays the contents (file names, sizes) of an archive.
 
 I track the input (the archive) in `In`.
 
