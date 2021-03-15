@@ -3,25 +3,6 @@
 This implements Forth words to use the I/O devices provided by my
 personal build.
 
-## Gopher
-
-RETRO has Gopher support via `gopher:get`.
-
-Takes:
-
-  destination
-  server name
-  port
-  selector
-
-Returns:
-
-  number of characters read
-
-~~~
-:gopher:get #5 io:scan-for io:invoke ;
-~~~
-
 ## Files
 
 ~~~

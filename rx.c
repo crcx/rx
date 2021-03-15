@@ -21,9 +21,6 @@
 #include <unistd.h>
 #include <limits.h>
 #include <fcntl.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
 
 #define CELL int32_t
 #define CELL_MIN INT_MIN + 1
@@ -40,7 +37,7 @@
 #define D_OFFSET_CLASS    2
 #define D_OFFSET_NAME     3
 
-#define NUM_DEVICES       7       /* Set the number of I/O devices     */
+#define NUM_DEVICES       6       /* Set the number of I/O devices     */
 
 #define MAX_OPEN_FILES   32
 
@@ -63,8 +60,6 @@ void io_scripting_handler();
 void io_scripting_query();
 void io_random();
 void io_random_query();
-void io_gopher();
-void io_gopher_query();
 
 CELL load_image();
 void prepare_vm();
@@ -87,14 +82,12 @@ Handler IO_deviceHandlers[] = {
   io_output_handler,      io_keyboard_handler,
   io_filesystem_handler,  io_unix_handler,
   io_scripting_handler,   io_random,
-  io_gopher,
 };
 
 Handler IO_queryHandlers[] = {
   io_output_query,       io_keyboard_query,
   io_filesystem_query,   io_unix_query,
   io_scripting_query,    io_random_query,
-  io_gopher_query,
 };
 
 CELL Dictionary;
@@ -302,69 +295,6 @@ void io_random() {
 void io_random_query() {
   stack_push(0);
   stack_push(10);
-}
-
-void error(const char *msg) {
-  perror(msg);
-  exit(0);
-}
-
-void gopher_fetch(char *host, CELL port, char *selector, CELL dest) {
-  int sockfd, portno, n;
-  struct sockaddr_in serv_addr;
-  struct hostent *server;
-  char data[1024 * 1024], buffer[1025];
-
-  portno = (int)port;
-  sockfd = socket(AF_INET, SOCK_STREAM, 0);
-  if (sockfd < 0) error("ERROR opening socket");
-
-  server = gethostbyname(host);
-  if (server == NULL) error("ERROR, no such host\n");
-
-  bzero(data, 1024 * 1024);
-  bzero((char *) &serv_addr, sizeof(serv_addr));
-
-  serv_addr.sin_family = AF_INET;
-  bcopy((char *)server->h_addr,
-     (char *)&serv_addr.sin_addr.s_addr,
-     server->h_length);
-  serv_addr.sin_port = htons(portno);
-
-  if (connect(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0)
-    error("ERROR connecting");
-
-  n = write(sockfd, selector, strlen(selector));
-  if (n < 0) error("ERROR writing to socket");
-
-  n = write(sockfd, "\n", strlen("\n"));
-  if (n < 0) error("ERROR writing to socket");
-
-  n = 1;
-  while (n > 0) {
-    bzero(buffer, 1025);
-    n = read(sockfd, buffer, 1024);
-    strlcat(data, buffer, 1024 * 1024);
-  }
-
-  close(sockfd);
-  string_inject(data, dest);
-  stack_push(strlen(data));
-}
-
-void io_gopher_query() {
-  stack_push(0);
-  stack_push(5);
-}
-
-void io_gopher() {
-  CELL port, dest;
-  char server[1025], selector[4097];
-  strlcpy(selector, string_extract(stack_pop()), 4096);
-  port = stack_pop();
-  strlcpy(server, string_extract(stack_pop()), 1024);
-  dest = stack_pop();
-  gopher_fetch(server, port, selector, dest);
 }
 
 void io_output_handler() {
