@@ -27,10 +27,12 @@ buffer over/underflow.
   :banner
     @Version #100 /mod 'RETRO_12_(%n.%n)\n s:format s:put
     FREE here EOM '%n_Max,_%n_Used,_%n_Free\n s:format s:put ;
+
+  :prompt compiling? [ nl dump-stack '_-->_ s:put ] -if ;
 ---reveal---
   :listen (-)
     banner
-    repeat s:get valid? &interpret &drop choose again ;
+    repeat prompt s:get valid? &interpret &drop choose again ;
 }}
 
 listen
