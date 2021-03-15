@@ -1,0 +1,7 @@
+This will display a file to the screen. It does not do any
+paging.
+
+~~~
+#0 get-argument [ s:put nl ] file:for-each-line
+~~~
+

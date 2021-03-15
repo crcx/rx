@@ -1,0 +1,10 @@
+This displays a file, with paging.
+
+~~~
+'Lines var
+
+#0 get-argument [ &Lines v:inc s:put nl
+                  @Lines #24 gteq? [ #0 !Lines s:get drop ] if
+                ] file:for-each-line
+~~~
+
