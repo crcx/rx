@@ -46,7 +46,7 @@ file.
 
 ~~~
 #140 'cfg:MAX-LINE-LENGTH const
-#2500 'cfg:MAX-LINES const
+#2001 'cfg:MAX-LINES const
 ~~~
 
 ## The File Contents
@@ -279,6 +279,17 @@ otherwise blank line to return to the command processing mode.
 }}
 ~~~
 
+Copy/paste
+
+~~~
+'LineBuffer d:create
+  cfg:MAX-LINE-LENGTH allot #0 ,
+
+:cmd:c @Input s:to-number ed:to-line &LineBuffer s:copy ;
+:cmd:u cmd:a &LineBuffer @Input s:to-number ed:to-line s:copy ;
+~~~
+
+
 ### Setting the Filename
 
     | f | filename   | set the filename for saves, loads               |
@@ -359,7 +370,7 @@ Use `q` to quit the editor.
 ## Register The Commands
 
 ~~~
-{ ',p#/axdiefwlqnN:* [ ] s:for-each }
+{ ',p#/axdiefwlqnN:*cu [ ] s:for-each }
 [ [ 'cmd:%c s:format d:lookup d:xt fetch ] sip ed:register-command ]
 a:for-each
 ~~~
