@@ -1,7 +1,0 @@
-I am currently using the following scheme:
-
-- programs have just a name
-- text files are prepended by t,
-- archives are prepended by a,
-- retro.muri, retro.forth, rx.c, devices.forth are special cases
-
