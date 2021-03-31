@@ -2,8 +2,8 @@ PREFIX ?= /usr/local
 CFLAGS=-O3 -static
 
 default:
-	$(CC) $(CFLAGS) rx.c -o rx
-	./rx -f retro.forth -f devices.retro -f strip-commentary > bootstrap
+	$(CC) $(CFLAGS) src,vm.c -o rx
+	./rx -f src,stdlib -f src,devices -f strip-commentary >bootstrap
 	cat bootstrap >>rx
 	rm bootstrap
 

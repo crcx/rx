@@ -36,8 +36,8 @@ commentary up to date, and has lead to better commented code.
 
 nl (ensure_that_the_block_delimiter_starts_on_a_new_line)
 '~~~ s:put nl
-'retro.forth [ condense 0; s:put nl ] unu
-'devices.retro [ condense 0; s:put nl ] unu
+'src,stdlib [ condense 0; s:put nl ] unu
+'src,devices [ condense 0; s:put nl ] unu
 '~~~ s:put nl
 ~~~
 

@@ -8,16 +8,16 @@
 }}
 
 'Output d:create
-  #256 #1024 * n:inc allot
+  #128 #1024 * n:inc allot
 ~~~
 
 ~~~
 'Done var
 :examine dup 'int32\_t_ngaImageCells_= s:format s:begins-with? @Done or !Done ;
 
-[ 'rx.c [ examine @Done [ drop ] if; s:put nl ] file:for-each-line
+[ 'src,vm.c [ examine @Done [ drop ] if; s:put nl ] file:for-each-line
   'patch-data [ s:put nl ] file:for-each-line
 ] &Output capture-output
 
-&Output 'rx.c file:spew
+&Output 'src,vm.c file:spew
 ~~~

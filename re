@@ -390,10 +390,10 @@ The final startup process is:
 
 ~~~
 SCRATCH &Filename s:copy s:empty !Input
-erase-all load-file
 { 'RETRO
   'Ready.
 } [ s:put nl ] a:for-each
+erase-all load-file
 edit bye
 ~~~
 

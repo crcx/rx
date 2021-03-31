@@ -1,9 +1,9 @@
 
-|\ |V| /|\ |\ /\  Charles Childers' Personal Computing System
-|/ | |  |  |/ \/  a Unix Kernel, Retro Forth, and a non-POSIX
-|\ | |  |  |\ /\  environment written in Forth
+|\ |V| /|\ |\ /\  This is Charles Childers' personal system
+|/ | |  |  |/ \/  using a custom branch of Retro to implement
+|\ | |  |  |\ /\  a non-POSIX userland on a Unix host.
 ---------+---------+---------+---------+---------+---------+----
-
+#.0>##%.
 File Naming Conventions
 -----------------------
 [type,]filename
@@ -15,8 +15,7 @@ Types:
   tsv  tab separated values
   csv  comma separated values
 
-Files with no suffix are Forth programs.
+Files with no suffix are generally Forth programs.
 
 On startup you are in `re`. Enter `lt,quick-start` then `,`
 for help.
-

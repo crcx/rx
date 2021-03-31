@@ -103,7 +103,7 @@ are compiled as dummy values, to be resolved later.
 
 ~~~
 #0 !AP
-'retro.muri
+'src,kernel
   [ dup s:length n:zero? [ drop #0 ] if 0;
     fetch-next &n:inc dip
     $i [ i here n:dec fetch I, ] case
@@ -122,7 +122,7 @@ get resolved and filled in. This allows for forward references.
 
 ~~~
 #0 !AP
-'retro.muri
+'src,kernel
   [ dup s:length n:zero? [ drop #0 ] if 0;
     fetch-next &n:inc dip
     $i [ drop &AP v:inc ] case
