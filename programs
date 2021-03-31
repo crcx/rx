@@ -1,0 +1,12 @@
+~~~
+file-list
+[ dup ', s:contains-string? [ drop ] if;
+  dup 'README s:eq? [ drop ] if;
+  dup 'rx.c s:eq? [ drop ] if;
+  dup 'retro.muri s:eq? [ drop ] if;
+  dup 'retro.forth s:eq? [ drop ] if;
+  dup 'Makefile s:eq? [ drop ] if;
+  s:put sp
+] a:for-each
+~~~
+
