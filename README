@@ -3,7 +3,7 @@
 |/ | |  |  |/ \/  using a custom branch of Retro to implement
 |\ | |  |  |\ /\  a non-POSIX userland on a Unix host.
 ---------+---------+---------+---------+---------+---------+----
-#.0>##%.
+
 File Naming Conventions
 -----------------------
 [type,]filename
