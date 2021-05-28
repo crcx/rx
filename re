@@ -262,7 +262,7 @@ existing lines down. When entering text with `e`, use a period on an
 otherwise blank line to return to the command processing mode.
 
 ~~~
-:cmd:i @Input $, s:split s:to-number ed:to-line [ n:inc ] dip s:copy ;
+:cmd:i @Input $, s:split/char s:to-number ed:to-line [ n:inc ] dip s:copy ;
 
 {{
   :add-space  dup ed:insert-line ;

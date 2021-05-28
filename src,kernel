@@ -1,4 +1,4 @@
-# RETRO Core 2021.4
+# RETRO Core 2021.7
 
 RETRO Core is  a minimal Forth implementation for the Nga
 virtual machine. Like Nga this is intended to be used within
@@ -134,6 +134,10 @@ Here's the initial memory map:
 | 2      | Dictionary                  |
 | 3      | Heap                        |
 | 4      | RETRO version               |
+| 5      | Pointer to `interpret`      |
+| 6      | Pointer to `err:notfound`   |
+| 7      | Pointer to TIB              |
+| 8      | Pointer to End of TIB       |
 
 ~~~
 : Dictionary
@@ -143,7 +147,13 @@ r 9999
 d 1536
 
 : Version
-d 202104
+d 202107
+
+: references
+r interpret
+r err:notfound
+r TIB
+d 1535
 ~~~
 
 Both of these are pointers. `Dictionary` points to the most
@@ -350,7 +360,7 @@ significant performance hit, so I'm leaving it this way.
 
     :choose
       &choice:false store &choice:true store
-      &choice:false + fetch call ;    
+      &choice:false + fetch call ;
 
 ~~~
 : choice:true
@@ -592,9 +602,6 @@ r comma
 | call a function      | compile a call to a function  |
 
 ~~~
-: class:word:interpret
-i ju......
-
 : class:word:compile
 i lilica..
 d 2049
@@ -606,7 +613,7 @@ r comma
 i lifelili
 r Compiler
 r class:word:compile
-r class:word:interpret
+r class:macro
 i liju....
 r choose
 ~~~
@@ -623,7 +630,7 @@ correspond to Nga instructions.
 i lifelili
 r Compiler
 r comma:opcode
-r class:word:interpret
+r class:macro
 i liju....
 r choose
 ~~~
@@ -793,7 +800,7 @@ r Which
 
 ### Number Conversion
 
-This code converts a zero terminated string into a number. The 
+This code converts a zero terminated string into a number. The
 approach is very simple:
 
 * Store an internal multiplier value (-1 for negative, 1 for
@@ -815,15 +822,26 @@ pretty easy to add them later, but it's not needed in the base
 kernel.
 
 ~~~
+: Base
+d 10
+
+: adjust
+i lisure..
+d 7
+
 : next
 i lica....
 r fetch-next
 i zr......
+i duligtli
+d 58
+r adjust
+i cc......
 i lisuswpu
 d 48
-i swlimuad
-d 10
-i poliju..
+i swlifemu
+r Base
+i adpoliju
 r next
 
 : check
@@ -1182,8 +1200,6 @@ i feju....
 d 0
 
 : interpret:sigil
-i ........
-i ........
 i lifezr..
 r sigil:handler
 i lifeliad
@@ -1751,12 +1767,22 @@ r 0057
 r muri:r
 r class:word
 s r
-: 9999
+: 0059
 r 0058
+r Base
+r class:data
+s Base
+: 9999
+r 0059
 r err:notfound
 r class:word
 s err:notfound
 ~~~
+
+~~~
+: TIB
+~~~
+
 
 ## Appendix: Words, Stack Effects, and Usage
 
@@ -1819,6 +1845,7 @@ s err:notfound
 | d:lookup        | s-p       | Given a string, return the DT (or 0 if undefined) |
 | Version         | -a        | Variable; holds a version identifier              |
 | err:notfound    | -         | Handler for token not found errors                |
+| Base            | -a        | Variable; holds current numeric base              |
 
 ## Legalities
 

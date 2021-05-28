@@ -513,12 +513,14 @@ Some numeric comparisons.
 :n:odd?       (n-f)  n:even? not ;
 ~~~
 
-The basic RETRO kernel doesn't provide two useful forms
+The basic RETRO kernel doesn't provide a few useful forms
 which I'll provide here.
 
 ~~~
 :if;   (qf-)  over &if  dip     0; pop drop-pair ;
 :-if;  (qf-)  over &-if dip not 0; pop drop-pair ;
+:if:   (f-)   #25 , #3 , ; immediate
+:-if:  (f-)   #1644289 , #-1 , #3 , ; immediate
 ~~~
 
 ## More Stack Shufflers.
@@ -1004,7 +1006,7 @@ RETRO provides string constants for several ranges of
 characters that are of some general interest.
 
 ~~~
-:s:DIGITS          (-s)  '0123456789 ;
+:s:DIGITS          (-s)  '0123456789ABCDEF ;
 :s:ASCII-LOWERCASE (-s)  'abcdefghijklmnopqrstuvwxyz ;
 :s:ASCII-UPPERCASE (-s)  'ABCDEFGHIJKLMNOPQRSTUVWXYZ ;
 :s:ASCII-LETTERS   (-s)
@@ -1116,21 +1118,6 @@ both leading and trailing spaces.
 :s:trim (s-s) s:trim-right s:trim-left ;
 ~~~
 
-
-Convert a decimal (base 10) number to a string.
-
-~~~
-{{
-  :correct (c-c)  dup $0 lt? [ $0 over - #2 * + ] if ; 
----reveal---
-  :n:to-string  (n-s)
-    [ here buffer:set dup n:abs
-      [ #10 /mod swap $0 + correct buffer:add dup n:-zero? ] while drop
-      n:negative? [ $- buffer:add ] if
-      buffer:start s:reverse ] buffer:preserve ;
-}}
-~~~
-
 Now replace the old sigil:' with this one that can optionally
 turn underscores into spaces.
 
@@ -1151,15 +1138,15 @@ character. Results are undefined if the character can not be
 located.
 
 ~~~
-:s:split (sc-ss)
+:s:split/char (sc-ss)
   dup-pair s:index-of nip dup-pair s:left &+ dip ;
 
-:s:split-on-string (ss-ss)
+:s:split/string (ss-ss)
   dup-pair s:index-of-string n:inc nip dup-pair s:left &+ dip ;
 
 :s:replace (sss-s)
   over s:length here store
-  [ s:split-on-string swap here fetch + ] dip s:prepend s:append ;
+  [ s:split/string swap here fetch + ] dip s:prepend s:append ;
 ~~~
 
 `s:tokenize` takes a string and a character to use as a
@@ -1196,7 +1183,7 @@ returns an array containing pointers to each of them.
   :s:tokenize-on-string (ss-s)
     #0 !TP
     [ dup &Needle s:copy s:append ] [ s:length !Len ] bi
-    [ &Needle s:split-on-string save next done? ] until
+    [ &Needle s:split/string save next done? ] until
     &Tokens @TP n:dec !Tokens ;
 }}
 ~~~
@@ -1216,6 +1203,19 @@ returns an array containing pointers to each of them.
 ---reveal---
   :s:replace-all (sss-s)
     &Heap [ extract tokenize merge clean s:temp ] v:preserve ;
+}}
+~~~
+
+~~~
+{{
+  'String d:create   #12 allot
+  :check-sign (n-)   n:negative? [ $- buffer:add ] if ;
+  :n->digit   (n-c)  s:DIGITS + fetch ;
+  :convert    (n-)   [ @Base /mod swap n->digit buffer:add dup n:zero? ] until drop ;
+---reveal---
+  :n:to-string (n-s)
+    [ &String buffer:set dup n:abs convert check-sign ] buffer:preserve
+    &String s:reverse ;
 }}
 ~~~
 
@@ -1653,7 +1653,7 @@ directly.
 
 ~~~
   :process-tokens (sn-)
-    [ (get_next_token ASCII:SPACE s:split ) swap
+    [ (get_next_token ASCII:SPACE s:split/char ) swap
       [ dup s:length n:-zero?
             &interpret &drop choose ] dip n:inc
     ] times interpret ;
@@ -1734,6 +1734,16 @@ original one.
 :unhook (a-) n:inc dup n:inc swap store ;
 ~~~
 
+## Numeric Bases
+
+~~~
+:decimal #10 !Base ;
+:binary  #2  !Base ;
+:octal   #8  !Base ;
+:hex     #16 !Base ;
+~~~
+
+
 ## I/O
 
 ~~~
@@ -1782,6 +1792,38 @@ provide much more than I can do here.
 
 ~~~
 :FREE (-n) STRINGS #1025 - here - ;
+~~~
+
+## Listener
+
+If a VM implementation provides both the character output and a
+generic "keyboard" input, the basic listener here can be used.
+
+~~~
+{{
+  :eol? (c-f)
+    [ ASCII:CR eq? ] [ ASCII:LF eq? ] [ ASCII:SPACE eq? ] tri or or ;
+
+  :valid? (s-sf)
+    dup s:length n:-zero? ;
+
+  :bs? (c-cf)
+    dup [ #8 eq? ] [ #127 eq? ] bi or ;
+
+  :check-bs (c-c)
+    bs? [ buffer:get buffer:get drop-pair ] if ;
+---reveal---
+  :c:get (-c) hook #1 io:scan-for io:invoke ;
+
+  :s:get (-s) [ #7 fetch buffer:set
+                [ c:get dup buffer:add check-bs eol? ] until
+                  buffer:start s:chop ] buffer:preserve ;
+
+  :listen (-)
+    repeat s:get valid? &interpret &drop choose again ;
+}}
+
+&listen #1 store
 ~~~
 
 ## The End

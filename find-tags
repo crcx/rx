@@ -6,4 +6,5 @@
 :scan [ dup has-tag? [ display-tag ] [ drop ] choose ] file:for-each-line ;
 
 file-list [ dup text? [ scan ] [ drop ] choose ] a:for-each
+~~~
 
